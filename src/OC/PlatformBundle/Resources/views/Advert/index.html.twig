@@ -4,13 +4,21 @@
     <title>Bienvenue sur ma première page avec OpenClassrooms !</title>
   </head>
   <body>
-    <h1>Hello {{ nom }} !</h1>
+    <h1>Hello world !</h1>
 
     <p>
       Le Hello World est un grand classique en programmation.
       Il signifie énormément, car cela veut dire que vous avez
       réussi à exécuter le programme pour accomplir une tâche simple :
       afficher ce hello world !
+    </p>
+    <p>
+      <a href= {{ path('oc_platform_view',{'id':advert_id})}}>
+      Testons une url relative</a>
+    </p>
+    <p>
+      <a href= {{ url('oc_platform_view',{'id':advert_id})}}>
+      Testons une url absolue</a>
     </p>
   </body>
 </html>
