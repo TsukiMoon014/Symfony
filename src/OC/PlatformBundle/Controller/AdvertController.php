@@ -4,12 +4,12 @@ namespace OC\PlatformBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 class AdvertController extends Controller
 {
 
-  public function indexAction()
-  {
+  public function indexAction(){
     $url = $this->generateUrl(
     	'oc_platform_view',
     	['id'=> 5],
@@ -21,8 +21,9 @@ class AdvertController extends Controller
     return new Response($content);
   }
 
-  public function viewAction($id){
-  	return new Response("Annonce id : ".$id);
+  public function viewAction($id, Request $request){
+  	$tag = $request->get('tag');
+  	return new Response("Annonce id : ".$id." avec le tag : ".$tag);
   }
 
   public function viewSlugAction($year, $slug, $_format){
