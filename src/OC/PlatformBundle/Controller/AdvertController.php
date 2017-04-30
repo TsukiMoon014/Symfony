@@ -21,13 +21,13 @@ class AdvertController extends Controller
   public function viewAction($id, Request $request){
   		return $this->render(
   			'OCPlatformBundle:Advert:view.html.twig',
-      		['id'=>5]
+      		['id'=>$id]
 		);
   	}
 
   public function addAction(Request $request){
 
-  	if($request->isMethode('POST')){
+  	if($request->isMethod('POST')){
   		$request->getSession()->getFlashBag()->add('notice','Annonce enregistrée');
 
   		return $this->redirectToRoute('oc_platform_view',['id'=>5]);
@@ -38,10 +38,10 @@ class AdvertController extends Controller
   }
 
   public function editAction($id,Request $request){
-	if($request->isMethode('POST')){
+	if($request->isMethod('POST')){
 	  		$request->getSession()->getFlashBag()->add('notice','Annonce modifiée');
 
-	  		return $this->redirectToRoute('oc_platform_view',['id'=>5]);
+	  		return $this->redirectToRoute('oc_platform_view',['id'=>$id]);
 	  	}
 
   	return $this->render('OCPlatformBundle:Advert:edit.html.twig');
@@ -49,5 +49,17 @@ class AdvertController extends Controller
 
   public function deleteAction($id){
   	return $this->render('OCPlatformBundle:Advert:delete.html.twig');
+  }
+
+  public function menuAction(){
+  	$listAdverts = array(
+      array('id' => 2, 'title' => 'Recherche développeur Symfony'),
+      array('id' => 5, 'title' => 'Mission de webmaster'),
+      array('id' => 9, 'title' => 'Offre de stage webdesigner')
+    );
+
+    return $this->render('OCPlatformBundle:Advert:menu.html.twig',
+    	['listAdverts' => $listAdverts]
+      );
   }
 }
