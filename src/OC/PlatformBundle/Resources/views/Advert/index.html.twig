@@ -1,8 +1,9 @@
+{% extends "OCPlatformBundle::layout.html.twig" %}
 
-  {% extends "OCPlatformBundle::layout.html.twig" %}
+{% block title %} Accueil - {{ parent() }}{% endblock %}
 
-    {% block title %}{{ parent() }} - Index{% endblock %}
-
-    {% block body %}
-      Notre plateforme est un peu vide pour le moment, mais cela viendra !
-    {% endblock %}
+{% block ocplatform_body %}
+	{% for advert in listAdverts %}
+		<a href="{{ path('oc_platform_view',{'id':advert.id})}}"></a>
+	{% endfor %}
+{% endblock %}
