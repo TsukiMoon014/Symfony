@@ -63,6 +63,14 @@ class AdvertController extends Controller
   		return $this->redirectToRoute('oc_platform_view',['id'=>5]);
   	}
 
+  	$antispam = $this->container->get('oc_platform.antispam');
+
+  	$test = "Lorem Ipsum tralala";
+
+  	if($antispam->isSpam($test)){
+  		throw new \Exception("C'est du spam !");
+  	}
+
   	return $this->render('OCPlatformBundle:Advert:add.html.twig');
 
   }
