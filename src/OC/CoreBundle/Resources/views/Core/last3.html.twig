@@ -1,0 +1,7 @@
+{% extends "OCCoreBundle:Core:index.html.twig" %}
+
+{% block occore_body %}
+	{% for advert in last3Adverts %}
+		<a href="{{ path('oc_platform_view',{'id':advert.id})}}">{{advert.title}}</a><br/>
+	{% endfor %}
+{% endblock %}
