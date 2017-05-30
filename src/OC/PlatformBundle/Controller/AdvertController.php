@@ -106,7 +106,7 @@ class AdvertController extends Controller
   	return $this->render('OCPlatformBundle:Advert:delete.html.twig',['advert'=>$advert]);
   }
 
-  public function menuAction(){
+  public function menuAction($limit){
   	$listAdverts = array(
       array('id' => 2, 'title' => 'Recherche développeur Symfony'),
       array('id' => 5, 'title' => 'Mission de webmaster'),

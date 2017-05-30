@@ -10,6 +10,8 @@
   <hr>
 
   {% block occore_body %}
+  	<h3>Dernières annonces</h3>
+ 	{{ render(controller("OCPlatformBundle:Advert:menu", {'limit': 3})) }}
   {% endblock %}
 
 {% endblock %}
