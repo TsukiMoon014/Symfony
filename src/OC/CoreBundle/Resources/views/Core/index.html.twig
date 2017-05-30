@@ -1,0 +1,17 @@
+{% extends "OCCoreBundle::layout.html.twig" %}
+
+{% block title %}
+  Bienvenue sur mon méga site tuto
+{% endblock %}
+
+{% block body %}
+  <h1>J'adore coder</h1>
+
+  <hr>
+
+  {% block occore_body %}
+  	<h3>Dernières annonces</h3>
+ 	{{ render(controller("OCPlatformBundle:Advert:menu", {'limit': 3})) }}
+  {% endblock %}
+
+{% endblock %}

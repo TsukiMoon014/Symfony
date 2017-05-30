@@ -34,6 +34,12 @@ class AdvertController extends Controller
         'id'      => 3,
         'author'  => 'Mathieu',
         'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
+        'date'    => new \Datetime()),
+      array(
+        'title'   => 'Offre de d\'esclave tamagochi',
+        'id'      => 4,
+        'author'  => 'Momo',
+        'content' => 'NSi toi aussi tu as envie de nettoyer de la merde virtuelle...',
         'date'    => new \Datetime())
     );
 
@@ -100,7 +106,7 @@ class AdvertController extends Controller
   	return $this->render('OCPlatformBundle:Advert:delete.html.twig',['advert'=>$advert]);
   }
 
-  public function menuAction(){
+  public function menuAction($limit){
   	$listAdverts = array(
       array('id' => 2, 'title' => 'Recherche développeur Symfony'),
       array('id' => 5, 'title' => 'Mission de webmaster'),
