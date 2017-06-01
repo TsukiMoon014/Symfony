@@ -108,13 +108,46 @@ class AdvertController extends Controller
 
   public function menuAction($limit){
   	$listAdverts = array(
-      array('id' => 2, 'title' => 'Recherche développeur Symfony'),
-      array('id' => 5, 'title' => 'Mission de webmaster'),
-      array('id' => 9, 'title' => 'Offre de stage webdesigner')
+      array(
+        'title'   => 'Recherche développpeur Symfony',
+        'id'      => 1,
+        'author'  => 'Alexandre',
+        'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
+        'date'    => new \Datetime()),
+      array(
+        'title'   => 'Mission de webmaster',
+        'id'      => 2,
+        'author'  => 'Hugo',
+        'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
+        'date'    => new \Datetime()),
+      array(
+        'title'   => 'Offre de stage webdesigner',
+        'id'      => 3,
+        'author'  => 'Mathieu',
+        'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
+        'date'    => new \Datetime()),
+      array(
+        'title'   => 'Offre de d\'esclave tamagochi',
+        'id'      => 4,
+        'author'  => 'Momo',
+        'content' => 'NSi toi aussi tu as envie de nettoyer de la merde virtuelle...',
+        'date'    => new \Datetime())
     );
 
+    // Récupération dégueulasse des 3 dernières annonces au lieu d'un ORDER BY en SQL
+    usort($listAdverts, function ($offer1, $offer2) {
+        return $offer2['date'] <=> $offer1['date'];
+    });
+
+    $nbAdvert = 0;
+    foreach ($listAdverts as $advert) {
+      $listAdvertsDisplay[] = $advert;
+      $nbAdvert++;
+      if($nbAdvert == $limit) break;
+    }
+
     return $this->render('OCPlatformBundle:Advert:menu.html.twig',
-    	['listAdverts' => $listAdverts]
+    	['listAdverts' => $listAdvertsDisplay]
       );
   }
 }
