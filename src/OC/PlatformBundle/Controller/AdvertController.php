@@ -5,6 +5,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use OC\PlatformBundle\Entity\Advert;
 
 class AdvertController extends Controller
 {
@@ -48,36 +49,37 @@ class AdvertController extends Controller
   }
 
   public function viewAction($id){
-  		$advert = array(
-	      'title'   => 'Recherche développpeur Symfony2',
-	      'id'      => $id,
-	      'author'  => 'Alexandre',
-	      'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-	      'date'    => new \Datetime()
-	    );
+  		$repository = $this->getDoctrine()->getManager()->getRepository('OCPlatformBundle:Advert');
+
+      $advert = $repository->find($id);
+      if(null === $advert){
+        throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas");
+      }
 
 	    return $this->render('OCPlatformBundle:Advert:view.html.twig', array(
 	      'advert' => $advert
 	    ));
   	}
 
-  public function addAction(Request $request){
+  public function addAction(Request $request)
+  {
+
+    $advert = new Advert();
+    $advert->setTitle('Recherche esclave php');
+    $advert->setAuthor('Amazon');
+    $advert->setContent('On cherche un bon pigeon des familles.');
+
+    $em = $this->getDoctrine()->getManager();
+    $em->persist($advert);
+    $em->flush();
 
   	if($request->isMethod('POST')){
   		$request->getSession()->getFlashBag()->add('notice','Annonce enregistrée');
 
-  		return $this->redirectToRoute('oc_platform_view',['id'=>5]);
+  		return $this->redirectToRoute('oc_platform_view',['id'=>$advert->getId()]);
   	}
 
-  	$antispam = $this->container->get('oc_platform.antispam');
-
-  	$test = "Lorem Ipsum tralala";
-
-  	if($antispam->isSpam($test)){
-  		throw new \Exception("C'est du spam !");
-  	}
-
-  	return $this->render('OCPlatformBundle:Advert:add.html.twig');
+  	return $this->render('OCPlatformBundle:Advert:add.html.twig',['advert'=>$advert]);
 
   }
 

@@ -12,6 +12,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Advert
 {
+    public function __construct(){
+        $this->date = new \DateTime();
+        $this->published = FALSE;
+    }
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="published", type="boolean")
+     */
+    private $published;
+
     /**
      * @var int
      *
@@ -155,5 +167,28 @@ class Advert
     {
         return $this->content;
     }
-}
 
+    /**
+     * Set published
+     *
+     * @param boolean $published
+     *
+     * @return Advert
+     */
+    public function setPublished($published)
+    {
+        $this->published = $published;
+
+        return $this;
+    }
+
+    /**
+     * Get published
+     *
+     * @return boolean
+     */
+    public function getPublished()
+    {
+        return $this->published;
+    }
+}
