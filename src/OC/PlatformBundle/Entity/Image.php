@@ -35,6 +35,13 @@ class Image
      */
     private $alt;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="isSfw", type="boolean")
+     */
+    private $isSfw;
+
 
     /**
      * Get id
@@ -92,5 +99,29 @@ class Image
     public function getAlt()
     {
         return $this->alt;
+    }
+
+    /**
+     * Set isSfw
+     *
+     * @param boolean $isSfw
+     *
+     * @return Image
+     */
+    public function setIsSfw($isSfw)
+    {
+        $this->isSfw = $isSfw;
+
+        return $this;
+    }
+
+    /**
+     * Get isSfw
+     *
+     * @return boolean
+     */
+    public function getIsSfw()
+    {
+        return $this->isSfw;
     }
 }
