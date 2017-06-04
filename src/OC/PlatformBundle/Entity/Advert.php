@@ -3,12 +3,14 @@
 namespace OC\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * oc_advert
  *
  * @ORM\Table(name="oc_advert")
  * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\AdvertRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Advert
 {
@@ -17,6 +19,43 @@ class Advert
         $this->published = FALSE;
     }
 
+    /**
+     * Let's keep the last update date before saving
+     * @ORM\PreUpdate
+     */
+    public function updateDate(){
+        $this->setUpdatedAt(new \DateTime());
+    }
+
+    public function increaseApplication(){
+        $this->nbApplications++;
+    }
+
+    public function decreaseApplication(){
+        if($this->nbApplications > 0){
+            $this->nbApplications--;
+        }else{
+            $this->nbApplications = 0;
+        }
+    }
+
+    /**
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="slug",type="string",length=255,unique=true)
+     */
+    private $slug;
+
+    /**
+     * @var int
+     * @ORM\Column(name="nb_applications",type="integer")
+     */
+    private $nbApplications;
+
+    /**
+     * @var Application
+     * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\Application", mappedBy="advert")
+     */
+    private $applications;
 
     /**
      * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Category", cascade="persist")
@@ -25,10 +64,22 @@ class Advert
     private $categories;
 
     /**
+     * @var \Datetime
+     * @ORM\Column(name="updated_at",type="datetime",nullable=true)
+     */
+    private $updatedAt;
+
+    /**
      * @var Image
      * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade="persist")
      */
     private $image;
+
+    /**
+     * @var string
+     * @ORM\Column(name="author_email",type="string",length=255)
+     */
+    private $authorEmail;
 
     /**
      * @var boolean
@@ -261,5 +312,137 @@ class Advert
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Add application
+     *
+     * @param Application $application
+     *
+     * @return Advert
+     */
+    public function addApplication(Application $application)
+    {
+        $this->applications[] = $application;
+
+        $application->setAdvert($this);
+
+        return $this;
+    }
+
+    /**
+     * Remove application
+     *
+     * @param Application $application
+     */
+    public function removeApplication(Application $application)
+    {
+        $this->applications->removeElement($application);
+    }
+
+    /**
+     * Get applications
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getApplications()
+    {
+        return $this->applications;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param \DateTime $updatedAt
+     *
+     * @return Advert
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Set nbApplications
+     *
+     * @param integer $nbApplications
+     *
+     * @return Advert
+     */
+    public function setNbApplications($nbApplications)
+    {
+        $this->nbApplications = $nbApplications;
+
+        return $this;
+    }
+
+    /**
+     * Get nbApplications
+     *
+     * @return integer
+     */
+    public function getNbApplications()
+    {
+        return $this->nbApplications;
+    }
+
+    /**
+     * Set authorEmail
+     *
+     * @param string $authorEmail
+     *
+     * @return Advert
+     */
+    public function setAuthorEmail($authorEmail)
+    {
+        $this->authorEmail = $authorEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get authorEmail
+     *
+     * @return string
+     */
+    public function getAuthorEmail()
+    {
+        return $this->authorEmail;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Advert
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

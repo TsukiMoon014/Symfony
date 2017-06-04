@@ -17,6 +17,16 @@
     {{ advert.content }}
   </div>
 
+  {% if listAdvertSkills|length > 0 %}
+    <div>Vous devez avoir au moins :
+      <ul>
+        {% for advertSkill in listAdvertSkills %}
+          <li>{{advertSkill.skill.name}} au niveau {{advertSkill.level}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   {% if not advert.categories.empty %}
     <p>
       Cette annonce est parue dans les catégories suivantes :
