@@ -3,6 +3,7 @@
 namespace OC\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * oc_advert
@@ -37,6 +38,12 @@ class Advert
             $this->nbApplications = 0;
         }
     }
+
+    /**
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="slug",type="string",length=255,unique=true)
+     */
+    private $slug;
 
     /**
      * @var int
@@ -413,5 +420,29 @@ class Advert
     public function getAuthorEmail()
     {
         return $this->authorEmail;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Advert
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
