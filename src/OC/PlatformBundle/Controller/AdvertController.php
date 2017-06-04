@@ -8,6 +8,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use OC\PlatformBundle\Entity\Advert;
 use OC\PlatformBundle\Entity\Image;
 use OC\PlatformBundle\Entity\Application;
+use OC\PlatformBundle\Entity\Skill;
+use OC\PlatformBundle\Entity\AdvertSkill;
 
 class AdvertController extends Controller
 {
@@ -54,18 +56,19 @@ class AdvertController extends Controller
 
     $em = $this->getDoctrine()->getManager();
 
-		$repository = $em->getRepository('OCPlatformBundle:Advert');
-
-    $advert = $repository->find($id);
+    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
     if(null === $advert){
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas");
     }
 
     $listApplications = $em->getRepository('OCPlatformBundle:Application')->findBy(['advert' => $advert]);
 
+    $listAdvertSkills = $em->getRepository("OCPlatformBundle:AdvertSkill")->findBy(['advert'=>$advert]);
+
     return $this->render('OCPlatformBundle:Advert:view.html.twig', array(
       'advert' => $advert,
-      'listApplications' => $listApplications
+      'listApplications' => $listApplications,
+      'listAdvertSkills' => $listAdvertSkills
     ));
 	}
 
@@ -91,6 +94,7 @@ class AdvertController extends Controller
     $img = new Image();
     $img->setUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Toto%27025.jpg/220px-Toto%27025.jpg");
     $img->setAlt('altTata.jpg');
+    $img->setIsSfw(TRUE);
 
     $advert->setImage($img);
 
@@ -104,8 +108,19 @@ class AdvertController extends Controller
     $application2->setContent('Je suis toujours à fond, à poing');
     $application2->setAdvert($advert);
 
-
     $em = $this->getDoctrine()->getManager();
+
+    $listSkills = $em->getRepository("OCPlatformBundle:Skill")->findAll();
+
+    foreach ($listSkills as $skill) {
+      $advertSkill = new AdvertSkill();
+
+      $advertSkill->setAdvert($advert);
+      $advertSkill->setSkill($skill);
+      $advertSkill->setLevel("Expert");
+
+      $em->persist($advertSkill);
+    }
 
     $em->persist($advert);
     $em->persist($application1);
