@@ -98,6 +98,8 @@ class AdvertController extends Controller
 
     $advert->setImage($img);
 
+    $advert->setAuthorEmail("ol.olivier.martinez@gmail.com");
+
     $application1 = new Application();
     $application1->setAuthor('Renardo');
     $application1->setContent('Je suis malin tout plein. Reeeeenaaaard ! Sacripant');
