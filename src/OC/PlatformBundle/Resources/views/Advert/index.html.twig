@@ -1,3 +1,4 @@
+{# src/OC/PlatformBundle/Resources/views/Advert/index.html.twig #}
 
 {% extends "OCPlatformBundle::layout.html.twig" %}
 
@@ -12,15 +13,11 @@
   <ul>
     {% for advert in listAdverts %}
       <li>
-      	<img src="{{advert.image.url}}" alt="{{advert.image.alt}}">
         <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
           {{ advert.title }}
         </a>
         par {{ advert.author }},
         le {{ advert.date|date('d/m/Y') }}
-        (Catégories : {% for category in advert.categories %}
-        {{ category.name }}{% if not loop.last %}, {% endif %}
-      {% endfor %})
       </li>
     {% else %}
       <li>Pas (encore !) d'annonces</li>
@@ -28,11 +25,12 @@
   </ul>
 
   <ul class="pagination">
-	  {% for p in range(1, nbPages) %}
-	    <li{% if p == page %} class="active"{% endif %}>
-	      <a href="{{ path('oc_platform_home', {'page': p}) }}">{{ p }}</a>
-	    </li>
-	  {% endfor %}
+    {# On utilise la fonction range(a, b) qui crée un tableau de valeurs entre a et b #}
+    {% for p in range(1, nbPages) %}
+      <li{% if p == page %} class="active"{% endif %}>
+        <a href="{{ path('oc_platform_home', {'page': p}) }}">{{ p }}</a>
+      </li>
+    {% endfor %}
   </ul>
 
 {% endblock %}

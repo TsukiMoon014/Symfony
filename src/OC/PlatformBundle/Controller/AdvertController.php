@@ -1,170 +1,152 @@
 <?php
+
+// src/OC/PlatformBundle/Controller/AdvertController.php
+
 namespace OC\PlatformBundle\Controller;
 
+use OC\PlatformBundle\Entity\Advert;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use OC\PlatformBundle\Entity\Advert;
-use OC\PlatformBundle\Entity\Image;
-use OC\PlatformBundle\Entity\Application;
-use OC\PlatformBundle\Entity\Skill;
-use OC\PlatformBundle\Entity\AdvertSkill;
 
 class AdvertController extends Controller
 {
-
-  public function indexAction($page){
-
-  	if($page < 1){
-  		throw new NotFoundHttpException("Page".$page."does not exists");
-  	}
-
-    $nbPerPage = 2;
-
-  	$listAdverts = $this->getDoctrine()->getManager()->getRepository('OCPlatformBundle:Advert')->getAdverts($page,$nbPerPage);
-
-    $nbPages = ceil(count($listAdverts)/$nbPerPage);
-
-    return $this->render('OCPlatformBundle:Advert:index.html.twig',
-      ['listAdverts' => $listAdverts,
-        'nbPages' => $nbPages,
-        'page' => $page
-      ]);
-  }
-
-  public function viewAction($id){
-
-    $em = $this->getDoctrine()->getManager();
-
-    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
-    if(null === $advert){
-      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas");
+  public function indexAction($page)
+  {
+    if ($page < 1) {
+      throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
     }
 
-    $listApplications = $em->getRepository('OCPlatformBundle:Application')->findBy(['advert' => $advert]);
+    // Ici je fixe le nombre d'annonces par page à 3
+    // Mais bien sûr il faudrait utiliser un paramètre, et y accéder via $this->container->getParameter('nb_per_page')
+    $nbPerPage = 3;
 
-    $listAdvertSkills = $em->getRepository("OCPlatformBundle:AdvertSkill")->findBy(['advert'=>$advert]);
+    // On récupère notre objet Paginator
+    $listAdverts = $this->getDoctrine()
+      ->getManager()
+      ->getRepository('OCPlatformBundle:Advert')
+      ->getAdverts($page, $nbPerPage)
+    ;
+
+    // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
+    $nbPages = ceil(count($listAdverts) / $nbPerPage);
+
+    // Si la page n'existe pas, on retourne une 404
+    if ($page > $nbPages) {
+      throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+    }
+
+    // On donne toutes les informations nécessaires à la vue
+    return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
+      'listAdverts' => $listAdverts,
+      'nbPages'     => $nbPages,
+      'page'        => $page,
+    ));
+  }
+
+  public function viewAction($id)
+  {
+    $em = $this->getDoctrine()->getManager();
+
+    // Pour récupérer une seule annonce, on utilise la méthode find($id)
+    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+
+    // $advert est donc une instance de OC\PlatformBundle\Entity\Advert
+    // ou null si l'id $id n'existe pas, d'où ce if :
+    if (null === $advert) {
+      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+    }
+
+    // Récupération de la liste des candidatures de l'annonce
+    $listApplications = $em
+      ->getRepository('OCPlatformBundle:Application')
+      ->findBy(array('advert' => $advert))
+    ;
+
+    // Récupération des AdvertSkill de l'annonce
+    $listAdvertSkills = $em
+      ->getRepository('OCPlatformBundle:AdvertSkill')
+      ->findBy(array('advert' => $advert))
+    ;
 
     return $this->render('OCPlatformBundle:Advert:view.html.twig', array(
-      'advert' => $advert,
+      'advert'           => $advert,
       'listApplications' => $listApplications,
-      'listAdvertSkills' => $listAdvertSkills
+      'listAdvertSkills' => $listAdvertSkills,
     ));
-	}
+  }
 
   public function addAction(Request $request)
   {
-
-    $advert = new Advert();
-    $advert->setTitle('Recherche esclave php');
-    $advert->setAuthor('Amazon');
-    $advert->setContent('On cherche un bon pigeon des familles.');
-    $img = new Image();
-    $img->setUrl("https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Toto%27025.jpg/220px-Toto%27025.jpg");
-    $img->setAlt('altTata.jpg');
-    $img->setIsSfw(TRUE);
-
-    $advert->setImage($img);
-
-    $advert->setAuthorEmail("ol.olivier.martinez@gmail.com");
-
-    $application1 = new Application();
-    $application1->setAuthor('Renardo');
-    $application1->setContent('Je suis malin tout plein. Reeeeenaaaard ! Sacripant');
-    $application1->setAdvert($advert);
-
-    $application2 = new Application();
-    $application2->setAuthor('Alphonso');
-    $application2->setContent('Je suis toujours à fond, à poing');
-    $application2->setAdvert($advert);
-
     $em = $this->getDoctrine()->getManager();
 
-    $listSkills = $em->getRepository("OCPlatformBundle:Skill")->findAll();
+    // On ne sait toujours pas gérer le formulaire, patience cela vient dans la prochaine partie !
 
-    foreach ($listSkills as $skill) {
-      $advertSkill = new AdvertSkill();
+    if ($request->isMethod('POST')) {
+      $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
 
-      $advertSkill->setAdvert($advert);
-      $advertSkill->setSkill($skill);
-      $advertSkill->setLevel("Expert");
-
-      $em->persist($advertSkill);
+      return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
     }
 
-    $em->persist($advert);
-    $em->persist($application1);
-    $em->persist($application2);
-
-    $em->flush();
-
-  	if($request->isMethod('POST')){
-  		$request->getSession()->getFlashBag()->add('notice','Annonce enregistrée');
-
-  		return $this->redirectToRoute('oc_platform_view',['id'=>$advert->getId()]);
-  	}
-
-  	return $this->render('OCPlatformBundle:Advert:add.html.twig',['advert'=>$advert]);
-
+    return $this->render('OCPlatformBundle:Advert:add.html.twig');
   }
 
-  public function editAction($id,Request $request){
-
+  public function editAction($id, Request $request)
+  {
     $em = $this->getDoctrine()->getManager();
 
-    $advert = $em->getRepository("OCPlatformBundle:Advert")->find($id);
-    if(null === $advert){
-      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas");
+    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+
+    if (null === $advert) {
+      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    $listeCategories = $em->getRepository("OCPlatformBundle:Category")->findAll();
+    // Ici encore, il faudra mettre la gestion du formulaire
 
-    foreach ($listeCategories as $category) {
-      $advert->addCategory($category);
+    if ($request->isMethod('POST')) {
+      $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
+
+      return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
     }
 
-    $em->flush();
-
-    if($request->isMethod('POST')){
-      $request->getSession()->getFlashBag()->add('notice','Annonce modifiée');
-
-    return $this->redirectToRoute('oc_platform_view',['id'=>$advert->getId()]);
-    }
-
-  	return $this->render('OCPlatformBundle:Advert:edit.html.twig',[
-  		'advert'=>$advert]);
+    return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
+      'advert' => $advert
+    ));
   }
 
-  public function deleteAction($id){
-  	$em = $this->getDoctrine()->getManager();
+  public function deleteAction($id)
+  {
+    $em = $this->getDoctrine()->getManager();
 
-    $advert = $em->getRepository("OCPlatformBundle:Advert")->find($id);
-    if(null === $advert){
-      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas");
+    $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+
+    if (null === $advert) {
+      throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
+    // On boucle sur les catégories de l'annonce pour les supprimer
     foreach ($advert->getCategories() as $category) {
       $advert->removeCategory($category);
     }
 
     $em->flush();
-
-  	return $this->render('OCPlatformBundle:Advert:delete.html.twig',['advert'=>$advert]);
+    
+    return $this->render('OCPlatformBundle:Advert:delete.html.twig');
   }
 
-  public function menuAction($limit){
-  	$listAdverts = $this
-    ->getDoctrine()
-    ->getManager()
-    ->getRepository("OCPlatformBundle:Advert")
-    ->findBy(
-        [],
-        ['date'=>'desc'],
-        $limit,0);
+  public function menuAction($limit)
+  {
+    $em = $this->getDoctrine()->getManager();
 
-    return $this->render('OCPlatformBundle:Advert:menu.html.twig',
-    	['listAdverts' => $listAdverts]
-      );
+    $listAdverts = $em->getRepository('OCPlatformBundle:Advert')->findBy(
+      array(),                 // Pas de critère
+      array('date' => 'desc'), // On trie par date décroissante
+      $limit,                  // On sélectionne $limit annonces
+      0                        // À partir du premier
+    );
+
+    return $this->render('OCPlatformBundle:Advert:menu.html.twig', array(
+      'listAdverts' => $listAdverts
+    ));
   }
 }

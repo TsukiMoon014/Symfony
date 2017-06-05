@@ -1,178 +1,135 @@
 <?php
+// src/OC/PlatformBundle/Entity/Application.php
 
 namespace OC\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Application
- *
  * @ORM\Table(name="oc_application")
  * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\ApplicationRepository")
  * @ORM\HasLifecycleCallbacks()
  */
 class Application
 {
+  /**
+   * @ORM\Column(name="id", type="integer")
+   * @ORM\Id
+   * @ORM\GeneratedValue(strategy="AUTO")
+   */
+  private $id;
 
-    public function __construct(){
-        $this->date = new \Datetime();
-    }
+  /**
+   * @ORM\Column(name="author", type="string", length=255)
+   */
+  private $author;
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function increaseNbApplications(){
-        $this->getAdvert()->increaseApplication();
-    }
+  /**
+   * @ORM\Column(name="content", type="text")
+   */
+  private $content;
 
-    /**
-     * @ORM\PreRemove
-     */
-    public function decreaseNbApplications(){
-        $this->getAdvert()->decreaseApplication();
-    }
+  /**
+   * @ORM\Column(name="date", type="datetime")
+   */
+  private $date;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+  /**
+   * @ORM\ManyToOne(targetEntity="OC\PlatformBundle\Entity\Advert", inversedBy="applications")
+   * @ORM\JoinColumn(nullable=false)
+   */
+  private $advert;
 
-    /**
-     * @var Advert
-     * @ORM\ManyToOne(targetEntity="OC\PlatformBundle\Entity\Advert", inversedBy="applications")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $advert;
+  public function __construct()
+  {
+    $this->date = new \Datetime();
+  }
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="author", type="string", length=255)
-     */
-    private $author;
+  /**
+   * @ORM\PrePersist
+   */
+  public function increase()
+  {
+    $this->getAdvert()->increaseApplication();
+  }
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="content", type="text")
-     */
-    private $content;
+  /**
+   * @ORM\PreRemove
+   */
+  public function decrease()
+  {
+    $this->getAdvert()->decreaseApplication();
+  }
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date", type="datetime")
-     */
-    private $date;
+  /**
+   * @return int
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
 
+  /**
+   * @param string $author
+   */
+  public function setAuthor($author)
+  {
+    $this->author = $author;
+  }
 
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+  /**
+   * @return string
+   */
+  public function getAuthor()
+  {
+    return $this->author;
+  }
 
-    /**
-     * Set author
-     *
-     * @param string $author
-     *
-     * @return Application
-     */
-    public function setAuthor($author)
-    {
-        $this->author = $author;
+  /**
+   * @param string $content
+   */
+  public function setContent($content)
+  {
+    $this->content = $content;
+  }
 
-        return $this;
-    }
+  /**
+   * @return string
+   */
+  public function getContent()
+  {
+    return $this->content;
+  }
 
-    /**
-     * Get author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
+  /**
+   * @param \Datetime $date
+   */
+  public function setDate(\Datetime $date)
+  {
+    $this->date = $date;
+  }
 
-    /**
-     * Set content
-     *
-     * @param string $content
-     *
-     * @return Application
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
+  /**
+   * @return \Datetime
+   */
+  public function getDate()
+  {
+    return $this->date;
+  }
 
-        return $this;
-    }
+  /**
+   * @param Advert $advert
+   */
+  public function setAdvert(Advert $advert)
+  {
+    $this->advert = $advert;
+  }
 
-    /**
-     * Get content
-     *
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     *
-     * @return Application
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return \DateTime
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * Set advert
-     *
-     * @param Advert $advert
-     *
-     * @return Application
-     */
-    public function setAdvert(Advert $advert)
-    {
-        $this->advert = $advert;
-
-        return $this;
-    }
-
-    /**
-     * Get advert
-     *
-     * @return Advert
-     */
-    public function getAdvert()
-    {
-        return $this->advert;
-    }
+  /**
+   * @return Advert
+   */
+  public function getAdvert()
+  {
+    return $this->advert;
+  }
 }
