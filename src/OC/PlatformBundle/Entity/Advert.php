@@ -4,6 +4,7 @@ namespace OC\PlatformBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * oc_advert
@@ -16,7 +17,8 @@ class Advert
 {
     public function __construct(){
         $this->date = new \DateTime();
-        $this->published = FALSE;
+        $this->categories = new ArrayCollection();
+        $this->applications = new ArrayCollection();
     }
 
     /**
@@ -49,7 +51,7 @@ class Advert
      * @var int
      * @ORM\Column(name="nb_applications",type="integer")
      */
-    private $nbApplications;
+    private $nbApplications = 0;
 
     /**
      * @var Application
@@ -86,7 +88,7 @@ class Advert
      *
      * @ORM\Column(name="published", type="boolean")
      */
-    private $published;
+    private $published = true;
 
     /**
      * @var int
@@ -357,7 +359,7 @@ class Advert
      *
      * @return Advert
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt=null)
     {
         $this->updatedAt = $updatedAt;
 

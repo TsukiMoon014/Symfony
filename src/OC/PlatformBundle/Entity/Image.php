@@ -40,7 +40,7 @@ class Image
      *
      * @ORM\Column(name="isSfw", type="boolean")
      */
-    private $isSfw;
+    private $isSfw = true;
 
 
     /**
