@@ -7,10 +7,19 @@ namespace OC\PlatformBundle\Controller;
 use OC\PlatformBundle\Entity\Advert;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdvertController extends Controller
 {
+
+  public function purgeAction($days){
+
+    $purgerService = $this->get("oc_platform.purger.advert");
+
+    return new Response($purgerService->purge($days));
+  }
+
   public function indexAction($page)
   {
     if ($page < 1) {
@@ -130,7 +139,7 @@ class AdvertController extends Controller
     }
 
     $em->flush();
-    
+
     return $this->render('OCPlatformBundle:Advert:delete.html.twig');
   }
 
