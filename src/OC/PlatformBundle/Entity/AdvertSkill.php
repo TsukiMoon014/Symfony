@@ -6,7 +6,7 @@ namespace OC\PlatformBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\AdvertSkillRepository")
  * @ORM\Table(name="oc_advert_skill")
  */
 class AdvertSkill
@@ -24,7 +24,7 @@ class AdvertSkill
   private $level;
 
   /**
-   * @ORM\ManyToOne(targetEntity="OC\PlatformBundle\Entity\Advert")
+   * @ORM\ManyToOne(targetEntity="OC\PlatformBundle\Entity\Advert",cascade={"remove"})
    * @ORM\JoinColumn(nullable=false)
    */
   private $advert;

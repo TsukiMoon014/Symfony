@@ -2,8 +2,6 @@
 
 namespace OC\PlatformBundle\Purger;
 
-
-
 class OCPurger{
 
 	/**
@@ -21,6 +19,11 @@ class OCPurger{
 	}
 
 	public function purge($days){
+
+		$test = $this->em->getRepository('OCPlatformBundle:AdvertSkill')->findOldAdverts($days);
+		//$this->em->flush();
+		var_dump($test);
+
 		return '<html><body>Purge des '.$days.' derniers jours</body></html>';
 	}
 
