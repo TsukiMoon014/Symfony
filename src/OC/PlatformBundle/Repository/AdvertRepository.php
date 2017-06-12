@@ -9,6 +9,19 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class AdvertRepository extends EntityRepository
 {
+
+  public function findOldAdverts($days){
+
+    $currentDay = new \Datetime();
+    $query = $this->createQueryBuilder('a')
+        ->where('a.date < :days')
+        ->andWhere('a.applications IS EMPTY')
+        ->setParameter('days', $currentDay->sub(new \DateInterval('P'.$days.'D')))
+        ->getQuery();
+
+      return $query->getResult();
+    }
+
   public function getAdverts($page, $nbPerPage)
   {
     $query = $this->createQueryBuilder('a')

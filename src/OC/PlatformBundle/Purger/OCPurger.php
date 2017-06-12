@@ -20,10 +20,13 @@ class OCPurger{
 
 	public function purge($days){
 
-		$test = $this->em->getRepository('OCPlatformBundle:AdvertSkill')->findOldAdverts($days);
-		//$this->em->flush();
-		var_dump($test);
+		$oldAdverts = $this->em->getRepository('OCPlatformBundle:Advert')->findOldAdverts($days);
 
+		foreach ($oldAdverts as $advert) {
+			$this->em->remove($advert);
+		}
+
+		$this->em->flush();
 		return '<html><body>Purge des '.$days.' derniers jours</body></html>';
 	}
 
