@@ -5,6 +5,7 @@
 namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -87,17 +88,24 @@ class AdvertController extends Controller
 
   public function addAction(Request $request)
   {
-    $em = $this->getDoctrine()->getManager();
+    // On crée un objet Advert
+    $advert = new Advert();
 
-    // On ne sait toujours pas gérer le formulaire, patience cela vient dans la prochaine partie !
+    // On crée le FormBuilder grâce au service form factory
+    $form = $this->createForm(AdvertType::class, $advert);
 
-    if ($request->isMethod('POST')) {
+    if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+      $em = $this->getDoctrine()->getManager();
+      $em->persist($advert);
+      $em->flush();
+
       $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
 
       return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
     }
 
-    return $this->render('OCPlatformBundle:Advert:add.html.twig');
+    return $this->render('OCPlatformBundle:Advert:add.html.twig',array('form' => $form->createView()));
   }
 
   public function editAction($id, Request $request)
@@ -110,16 +118,22 @@ class AdvertController extends Controller
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    // Ici encore, il faudra mettre la gestion du formulaire
+    $form = $this->createForm(AdvertType::class,$advert);
 
-    if ($request->isMethod('POST')) {
+    if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+      $em = $this->getDoctrine()->getManager();
+      $em->persist($advert);
+      $em->flush();
+
       $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
 
       return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
     }
 
     return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
-      'advert' => $advert
+      'advert' => $advert,
+      'form' => $form->createView()
     ));
   }
 
