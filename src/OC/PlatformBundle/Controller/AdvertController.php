@@ -6,6 +6,7 @@ namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Advert;
 use OC\PlatformBundle\Form\AdvertType;
+use OC\PlatformBundle\Form\AdvertEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -118,12 +119,10 @@ class AdvertController extends Controller
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    $form = $this->createForm(AdvertType::class,$advert);
+    $form = $this->createForm(AdvertEditType::class,$advert);
 
     if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($advert);
       $em->flush();
 
       $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
