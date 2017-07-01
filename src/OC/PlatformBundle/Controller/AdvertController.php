@@ -136,7 +136,7 @@ class AdvertController extends Controller
     ));
   }
 
-  public function deleteAction($id)
+  public function deleteAction(Request $request, $id)
   {
     $em = $this->getDoctrine()->getManager();
 
@@ -146,14 +146,21 @@ class AdvertController extends Controller
       throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
     }
 
-    // On boucle sur les catégories de l'annonce pour les supprimer
-    foreach ($advert->getCategories() as $category) {
-      $advert->removeCategory($category);
+    $form = $this->get('form.factory')->create();
+
+    if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+      $em->remove($advert);
+      $em->flush();
+
+      $request->getSession()->getFlashBag()->add('info', "L'annonce a bien été supprimée.");
+
+      return $this->redirectToRoute('oc_platform_home');
     }
 
-    $em->flush();
-
-    return $this->render('OCPlatformBundle:Advert:delete.html.twig');
+    return $this->render('OCPlatformBundle:Advert:delete.html.twig',array(
+      'advert' => $advert,
+      'form' => $form->createView()
+      ));
   }
 
   public function menuAction($limit)

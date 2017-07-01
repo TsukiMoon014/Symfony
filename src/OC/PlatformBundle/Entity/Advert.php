@@ -57,7 +57,7 @@ class Advert
   private $published = true;
 
   /**
-   * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist"})
+   * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
    */
   private $image;
 
@@ -68,7 +68,7 @@ class Advert
   private $categories;
 
   /**
-   * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\Application", mappedBy="advert")
+   * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\Application", mappedBy="advert", cascade={"remove"})
    */
   private $applications; // Notez le « s », une annonce est liée à plusieurs candidatures
 
