@@ -88,14 +88,16 @@ class Advert
    */
   private $updatedAt;
 
+  /**
+   * @ORM\Column(name="nb_applications", type="integer")
+   */
+  private $nbApplications = 0;
 
   /**
-   * @Gedmo\tata(fields={"title"})
+   * @Gedmo\Slug(fields={"title"})
    * @ORM\Column(name="slug", type="string", length=255, unique=true)
    */
   private $slug;
-
-  private $toto;
 
   public function __construct()
   {
